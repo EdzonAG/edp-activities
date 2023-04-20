@@ -1,0 +1,132 @@
+\documentclass[12pt]{article}
+
+% PACKAGES
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel} 
+\usepackage[hidelinks]{hyperref}
+\usepackage[margin = 0.75in]{geometry}
+\usepackage{amssymb,amsmath,amsthm,amsfonts}
+\usepackage{framed}
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{float}
+\usepackage{cancel}
+\usepackage{cellspace}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{csvsimple}
+
+\definecolor{keywords}{RGB}{255,0,90}
+\definecolor{comments}{RGB}{0,0,113}
+\definecolor{red}{RGB}{160,0,0}
+\definecolor{green}{RGB}{0,150,0}
+% \usepackage{titlesec}
+
+% SETTINGS
+\newcommand{\doublerule}[1][.4pt]{\noindent\makebox[0pt][l]{\rule[.7ex]{\linewidth}{#1}}\rule[.1ex]{\linewidth}{#1}}
+\renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
+\addto\captionsspanish{\renewcommand{\contentsname}{Índice}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\newenvironment{solution}{\begin{proof}[Solución]}{\end{proof}}
+\graphicspath{{./img/}}
+\decimalpoint
+
+% HEAD AND FOOT
+\setlength{\headheight}{5pt}
+% \setlength{\footskip}{25pt}
+% \pagestyle{fancy}
+% \renewcommand{\footrulewidth}{0.4pt}
+% \fancyhf{}
+% \fancypagestyle{empty}{
+%     \fancyhf{}
+% }
+
+% REPORT OR BOOK
+% \titleformat{\chapter}{\normalfont\huge}{\thechapter.}{20pt}{\huge \bf}
+% \titlespacing{\chapter}{0pt}{0pt}{1cm}
+
+% THEOREMS
+\newtheorem*{observation}{Observación}
+\newtheorem*{definition}{Definición}
+\newtheorem*{theorem}{Teorema}
+\newtheorem*{example}{Ejemplo}
+\newtheorem*{lemma}{Lema}
+
+% DATA
+\title{Practica Dos}
+\author{Edzon Alanis}
+\date{\today}
+\newcommand{\signature}{Materia}
+\newcommand{\professor}{Profesor}
+\newcommand{\titlepagelogo}{./img/logo.png}
+
+% SET VARIABLES
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\begin{document}
+\maketitle
+\lstset{language=Python, 
+        basicstyle=\ttfamily\small, 
+        keywordstyle=\color{keywords},
+        commentstyle=\color{comments},
+        stringstyle=\color{red},
+        numbers=left,
+        showstringspaces=false,
+        identifierstyle=\color{green},
+        keywords=[2]{pow},
+        keywordstyle=[2]{\color{orange}},
+}
+\section*{Código (Python)}
+\begin{lstlisting}
+import numpy as np
+import pandas as pd
+# Constantes Default
+k = 1e-3
+h = 1e-1
+r = k/h**2
+S = [[]]
+# Contantes Definidas
+x = 1
+j = 20
+# Funciones Cond. Iniciales.
+u = [lambda x: 2*x, lambda x: 2*(1-x)]
+# Vector X
+z = int(x/h)
+X = np.linspace(0,x,z+1)
+# Primer Fila U
+for f in X:
+    if f <= 0.5:
+        S[0].append(u[0](f))
+    else:
+        S[0].append(u[1](f))
+# Filas U
+for g in range(j):
+    St = []
+    for w in range(len(X)-2):
+        u = r*S[g][w] + (1-2*r)*S[g][w+1] + r*S[g][w+2]
+        St.append(u)
+    St.insert(0, 0)
+    St.append(0)
+    S.append(St)
+# Convertir a Tabla
+S = np.array(S)
+S = np.around(S, decimals=3)
+# Resultados a CSV
+table = pd.DataFrame(S)
+table.to_csv('result.csv')
+\end{lstlisting}
+\section*{Resultados}
+\[h = 10^{-1}, k = 10^{-3},j = 20\]
+\begin{center}
+    \csvautotabular{result.csv}
+\end{center}
+
+
+\end{document}
