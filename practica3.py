@@ -13,7 +13,7 @@ j = int(0.5/k)
 
 # Initial Functions
 u = [lambda x: 2*x,lambda x: 2*(1-x)]
-n = 5
+n = 20
 
 # X vector
 z = int(x/h)
@@ -60,5 +60,8 @@ for k in range(n):
     St.insert(0, 0)
     St.append(0)
     S.append(St)
+    
+F = np.around(S, decimals=4)
+table = pd.DataFrame(F)
+table.to_csv('explicito.csv')
 # print(np.round(S, decimals=3))
-print(S)
